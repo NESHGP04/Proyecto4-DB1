@@ -1,0 +1,303 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model arbitraje {
+  id         Int      @id @default(autoincrement())
+  partido_id Int
+  arbitro_id Int
+  rol        String   @db.VarChar(50)
+  arbitros   arbitros @relation(fields: [arbitro_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  partidos   partidos @relation(fields: [partido_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([partido_id, arbitro_id])
+}
+
+model arbitros {
+  id        Int         @id @default(autoincrement())
+  nombre    String      @db.VarChar(100)
+  apellido  String      @db.VarChar(100)
+  nivel     String?     @db.VarChar(50)
+  correo    String?     @unique @db.VarChar(150)
+  arbitraje arbitraje[]
+}
+
+model calendario {
+  id           Int        @id @default(autoincrement())
+  temporada_id Int
+  fecha        DateTime   @db.Date
+  descripcion  String?
+  temporadas   temporadas @relation(fields: [temporada_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model division {
+  id                     Int                      @id @default(autoincrement())
+  nombre                 String                   @unique @db.VarChar(50)
+  descripcion            String?
+  equipos                equipos[]
+  ranking_equipos_torneo ranking_equipos_torneo[]
+  torneos                torneos[]
+}
+
+model entrenadores {
+  id            Int                 @id @default(autoincrement())
+  nombre        String              @db.VarChar(100)
+  apellido      String              @db.VarChar(100)
+  rol           rol_entrenador_enum
+  equipo_id     Int
+  fecha_ingreso DateTime            @default(dbgenerated("CURRENT_DATE")) @db.Date
+  correo        String?             @unique @db.VarChar(150)
+  equipos       equipos             @relation(fields: [equipo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model equipos {
+  id                                             Int                      @id @default(autoincrement())
+  nombre                                         String                   @unique @db.VarChar(100)
+  ciudad                                         String?                  @db.VarChar(100)
+  fecha_creacion                                 DateTime?                @db.Date
+  division_id                                    Int
+  entrenadores                                   entrenadores[]
+  division                                       division                 @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  jugadores                                      jugadores[]
+  partidos_partidos_equipo_local_idToequipos     partidos[]               @relation("partidos_equipo_local_idToequipos")
+  partidos_partidos_equipo_visitante_idToequipos partidos[]               @relation("partidos_equipo_visitante_idToequipos")
+  ranking_equipos_torneo                         ranking_equipos_torneo[]
+  sanciones                                      sanciones[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model estadios {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique @db.VarChar(100)
+  ubicacion String?    @db.VarChar(150)
+  capacidad Int?
+  partidos  partidos[]
+}
+
+model estadisticas_jugador {
+  id                Int        @id @default(autoincrement())
+  jugador_id        Int
+  temporada_id      Int
+  partidos_jugados  Int?       @default(0)
+  promedio_bateo    Decimal?   @default(0.000) @db.Decimal(4, 3)
+  homeruns          Int?       @default(0)
+  carreras_anotadas Int?       @default(0)
+  jugadores         jugadores  @relation(fields: [jugador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  temporadas        temporadas @relation(fields: [temporada_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model estadisticas_partido {
+  id                  Int       @id @default(autoincrement())
+  partido_id          Int
+  jugador_id          Int
+  hits                Int?      @default(0)
+  carreras            Int?      @default(0)
+  bases               Int?      @default(0)
+  errores             Int?      @default(0)
+  strikeouts          Int?      @default(0)
+  innings_lanzados    Decimal?  @default(0) @db.Decimal(4, 2)
+  carreras_permitidas Int?      @default(0)
+  ponches             Int?      @default(0)
+  bases_por_bola      Int?      @default(0)
+  fecha_registro      DateTime? @default(now()) @db.Timestamp(6)
+  jugadores           jugadores @relation(fields: [jugador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  partidos            partidos  @relation(fields: [partido_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([partido_id, jugador_id])
+}
+
+model estadisticas_pitcher {
+  id                  Int       @id @default(autoincrement())
+  partido_id          Int
+  jugador_id          Int
+  innings_lanzados    Decimal   @default(0) @db.Decimal(4, 2)
+  ponches             Int?      @default(0)
+  carreras_permitidas Int?      @default(0)
+  bases_por_bola      Int?      @default(0)
+  hits_permitidos     Int?      @default(0)
+  jugadores           jugadores @relation(fields: [jugador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  partidos            partidos  @relation(fields: [partido_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([partido_id, jugador_id])
+}
+
+model fotos_jugadores {
+  id           Int       @id @default(autoincrement())
+  jugador_id   Int
+  url          String
+  descripcion  String?
+  fecha_subida DateTime? @default(now()) @db.Timestamp(6)
+  jugadores    jugadores @relation(fields: [jugador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model jugadores {
+  id                   Int                    @id @default(autoincrement())
+  nombre               String                 @db.VarChar(100)
+  apellido             String                 @db.VarChar(100)
+  fecha_nacimiento     DateTime               @db.Date
+  genero               genero_enum
+  equipo_id            Int
+  fecha_ingreso        DateTime               @default(dbgenerated("CURRENT_DATE")) @db.Date
+  nacionalidad         String?                @db.VarChar(50)
+  estadisticas_jugador estadisticas_jugador[]
+  estadisticas_partido estadisticas_partido[]
+  estadisticas_pitcher estadisticas_pitcher[]
+  fotos_jugadores      fotos_jugadores[]
+  equipos              equipos                @relation(fields: [equipo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  jugadores_posicion   jugadores_posicion[]
+  lesiones             lesiones[]
+  sanciones            sanciones[]
+
+  @@unique([nombre, apellido, fecha_nacimiento])
+}
+
+model jugadores_posicion {
+  jugador_id   Int
+  posicion_id  Int
+  temporada_id Int
+  jugadores    jugadores  @relation(fields: [jugador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  posiciones   posiciones @relation(fields: [posicion_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  temporadas   temporadas @relation(fields: [temporada_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([jugador_id, posicion_id, temporada_id])
+}
+
+model lesiones {
+  id           Int                @id @default(autoincrement())
+  jugador_id   Int
+  fecha_inicio DateTime           @db.Date
+  fecha_fin    DateTime?          @db.Date
+  tipo         String?            @db.VarChar(100)
+  descripcion  String?
+  estado       estado_lesion_enum @default(activa)
+  jugadores    jugadores          @relation(fields: [jugador_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model partidos {
+  id                                            Int                     @id @default(autoincrement())
+  torneo_id                                     Int
+  equipo_local_id                               Int
+  equipo_visitante_id                           Int
+  fecha_hora                                    DateTime                @db.Timestamp(6)
+  resultado                                     resultado_partido_enum? @default(pendiente)
+  score_local                                   Int?                    @default(0)
+  score_visitante                               Int?                    @default(0)
+  estadio_id                                    Int
+  arbitraje                                     arbitraje[]
+  estadisticas_partido                          estadisticas_partido[]
+  estadisticas_pitcher                          estadisticas_pitcher[]
+  equipos_partidos_equipo_local_idToequipos     equipos                 @relation("partidos_equipo_local_idToequipos", fields: [equipo_local_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  equipos_partidos_equipo_visitante_idToequipos equipos                 @relation("partidos_equipo_visitante_idToequipos", fields: [equipo_visitante_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  estadios                                      estadios                @relation(fields: [estadio_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  torneos                                       torneos                 @relation(fields: [torneo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model posiciones {
+  id                 Int                  @id @default(autoincrement())
+  nombre             posicion_enum        @unique
+  descripcion        String?
+  jugadores_posicion jugadores_posicion[]
+}
+
+model ranking_equipos_torneo {
+  id                 Int      @id @default(autoincrement())
+  torneo_id          Int
+  equipo_id          Int
+  division_id        Int
+  puntos             Int?     @default(0)
+  partidos_ganados   Int?     @default(0)
+  partidos_perdidos  Int?     @default(0)
+  partidos_empatados Int?     @default(0)
+  division           division @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  equipos            equipos  @relation(fields: [equipo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  torneos            torneos  @relation(fields: [torneo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([torneo_id, equipo_id])
+}
+
+model sanciones {
+  id           Int        @id @default(autoincrement())
+  jugador_id   Int?
+  equipo_id    Int?
+  fecha_inicio DateTime   @db.Date
+  fecha_fin    DateTime?  @db.Date
+  motivo       String
+  tipo_sancion String     @db.VarChar(50)
+  creado_en    DateTime?  @default(now()) @db.Timestamp(6)
+  equipos      equipos?   @relation(fields: [equipo_id], references: [id], onUpdate: NoAction)
+  jugadores    jugadores? @relation(fields: [jugador_id], references: [id], onUpdate: NoAction)
+}
+
+model temporadas {
+  id                   Int                    @id @default(autoincrement())
+  nombre               String                 @unique @db.VarChar(50)
+  fecha_inicio         DateTime               @db.Date
+  fecha_fin            DateTime               @db.Date
+  calendario           calendario[]
+  estadisticas_jugador estadisticas_jugador[]
+  jugadores_posicion   jugadores_posicion[]
+}
+
+model torneos {
+  id                     Int                      @id @default(autoincrement())
+  nombre                 String                   @unique @db.VarChar(100)
+  temporada              String?                  @db.VarChar(50)
+  division_id            Int
+  fecha_inicio           DateTime                 @db.Date
+  fecha_fin              DateTime                 @db.Date
+  estado                 String                   @default("activo") @db.VarChar(20)
+  partidos               partidos[]
+  ranking_equipos_torneo ranking_equipos_torneo[]
+  division               division                 @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+enum estado_lesion_enum {
+  activa
+  recuperado
+  cr_nica    @map("crónica")
+}
+
+enum genero_enum {
+  M
+  F
+  O
+}
+
+enum posicion_enum {
+  pitcher
+  catcher
+  primera_base
+  segunda_base
+  tercera_base
+  shortstop
+  jardinero_izquierdo
+  jardinero_central
+  jardinero_derecho
+  designado
+}
+
+enum resultado_partido_enum {
+  ganado
+  perdido
+  empate
+  pendiente
+}
+
+enum rol_entrenador_enum {
+  principal
+  asistente
+  preparador_f_sico @map("preparador físico")
+  analista
+}
+
+enum tipo_estadistica_enum {
+  bateo
+  pitcheo
+  defensa
+}
