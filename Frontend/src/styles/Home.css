@@ -13,7 +13,7 @@
 .overlay-box {
   background-color: rgba(255, 153, 0, 0.8);
   color: white;
-  padding: 20vw;
+  padding: 15vw;
   border-radius: 10px;
   text-align: center;
   width: 90%;
@@ -23,7 +23,7 @@
 
 /* Título */
 .overlay-box h1 {
-  font-size: clamp(3rem, 8vw, 8rem);
+  font-size: clamp(4rem, 12vw, 10rem);
   font-weight: 370;
   margin-bottom: 0px;
   margin-top: -20px;
@@ -34,14 +34,14 @@
 /* Botón */
 .button-home {
   position: absolute;
-  bottom: 30%;
+  bottom: 20%;
   right: 40%;
   padding: 1.5vw 3.5vw;  
   min-width: 120px;
   max-width: 210px;  
   border: none;
   border-radius: 10px;
-  background-color: rgb(171, 67, 67);
+  background-color: rgb(68, 68, 215);
   color: #ffffff;
   font-size: clamp(1.2rem, 2vw, 1.5rem); 
   font-weight: 550;
