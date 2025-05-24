@@ -1,5 +1,16 @@
+@font-face {
+  font-family: 'Sports World';
+  src: url('@assets/fonts/Sports World-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Sports World', sans-serif;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Sports World',system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
