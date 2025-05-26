@@ -1,6 +1,5 @@
 import { useYear } from '@/context/YearContext';
 import { useDivision } from '@context/DivisionContext';
-import { useState } from 'react';
 
 //Traer de DB
 const divisionesDisponibles = ['Norte', 'Sur', 'Este', 'Oeste'];

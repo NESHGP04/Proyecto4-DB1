@@ -8,6 +8,9 @@ import Bat from '@pages/Bat';
 import Picheo from '@pages/Picheo';
 import Filder from '@pages/Filder';
 
+import Divisions from '@pages/Divisiones';
+import TeamsDivision from '@pages/TeamsDivision';
+
 function App() {
   return (
     <BrowserRouter>
@@ -20,6 +23,10 @@ function App() {
         <Route path="/bat-stat" element={<Bat />} />
         <Route path="/pitcher-stat" element={<Picheo />} />
         <Route path="/filder-stat" element={<Filder />} />
+
+        {/* Divisiones */}
+        <Route path="/divisions" element={<Divisions />} />
+        <Route path="/teams-division/:division/:year" element={<TeamsDivision />} />
 
       </Routes>
       
