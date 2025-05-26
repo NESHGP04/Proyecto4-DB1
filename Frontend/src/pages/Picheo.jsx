@@ -1,16 +1,16 @@
 import '@styles/Positions.css'
 import Navbar from "@components/navigation/Navbar";
-import HeaderPos from '../components/positions/HeaderPos';
-import TablePos from '../components/positions/TablePos';
+import HeaderPic from '@components/picheo/HeaderPic';
+import TablePic from '@components/picheo/TablePic';
 
 function Positions(){
     return(
         <>
             <Navbar />
             
-            <HeaderPos />
+            <HeaderPic />
 
-            <TablePos />
+            <TablePic />
         </>
     );
 }

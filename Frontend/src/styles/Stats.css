@@ -1,3 +1,9 @@
+.anton-regular {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* Título */
 .header-container {
   display: flex;
@@ -10,26 +16,29 @@
 .header {
   font-size: 4.5rem;
   margin: 0;
+  margin-left: 6.5%;
   color: black;
   font-family: 'Sports World',system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 /* Selector de año */
 .year-selector {
+  font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
   padding: 0.5rem;
   font-size: 1.2rem;
-  margin-right: 9%;
+  margin-right: 15%;
   border-color: aliceblue;
 
 }
 
 /* Fechas */
 .dates-container {
+  font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-top: 0.1rem;
-  margin-left: 35%;
+  margin-left: 40%;
 }
 
 .dates-container p {

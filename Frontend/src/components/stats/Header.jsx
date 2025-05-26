@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useYear } from '@context/YearContext';
 import '@styles/Stats.css'
 
 function Header(){
-    const [year, setYear] = useState(2024); // Año fijo por defecto
+    const { year, setYear } = useYear();
     const [startDate, setStartDate] = useState('2024-01-01');
     const [endDate, setEndDate] = useState('2024-12-31');
 

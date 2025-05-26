@@ -1,16 +1,16 @@
 import '@styles/Positions.css'
 import Navbar from "@components/navigation/Navbar";
-import HeaderPos from '../components/positions/HeaderPos';
-import TablePos from '../components/positions/TablePos';
+import HeaderBat from '@components/bat/HeaderBat';
+import TableBat from '@components/bat/TableBat';
 
 function Positions(){
     return(
         <>
             <Navbar />
             
-            <HeaderPos />
+            <HeaderBat />
 
-            <TablePos />
+            <TableBat />
         </>
     );
 }

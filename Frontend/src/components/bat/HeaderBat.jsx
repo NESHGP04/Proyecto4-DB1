@@ -1,6 +1,5 @@
 import { useYear } from '@/context/YearContext';
 import { useDivision } from '@context/DivisionContext';
-import { useState } from 'react';
 
 //Traer de DB
 const divisionesDisponibles = ['Norte', 'Sur', 'Este', 'Oeste'];
@@ -8,17 +7,16 @@ const divisionesDisponibles = ['Norte', 'Sur', 'Este', 'Oeste'];
 function HeaderPos(){
     const { year } = useYear(); // accede al año compartido
     const { division, setDivision } = useDivision();
-    // const [division, setDivision] = useState('Norte');
 
     return(
         <>
         <div className="header-container">
-             <h1 className="headerpos">Tabla de Posiciones</h1>
+             <h1 className="headerpos">Bateo</h1>
         </div>
 
         <p className="year">{year}</p>
 
-        <div className='selectors-container'>
+         <div className='selectors-container'>
             <select
                 className="division-selector"
                 value={division}
@@ -30,8 +28,7 @@ function HeaderPos(){
                     </option>
                 ))}
             </select>
-        </div>
-        
+         </div>
         </>
     );
 }
