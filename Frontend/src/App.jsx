@@ -10,6 +10,7 @@ import Filder from '@pages/Filder';
 
 import Divisions from '@pages/Divisiones';
 import TeamsDivision from '@pages/TeamsDivision';
+import DetailPlayer from '@pages/DetailPlayer';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         {/* Divisiones */}
         <Route path="/divisions" element={<Divisions />} />
         <Route path="/teams-division/:division/:year" element={<TeamsDivision />} />
+        <Route path="/player/:id" element={<DetailPlayer />} />
 
       </Routes>
       

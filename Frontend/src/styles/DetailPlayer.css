@@ -1,0 +1,67 @@
+/* Header */
+.header-detail-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-detail {
+  font-size: 4.7rem;
+  margin: 0;
+  margin-right: 0;
+  color: black;
+  font-family: 'Sports World',system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* Ave. Box */
+    .averageDetail-box {
+        width: 250px;
+        height: 100px;
+        background-color: #f2f2f2;
+        border: 2px solid #3a2c25;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0rem;
+        margin-right: 15px;
+        box-shadow: 0 4px 8px rgba(100, 139, 79, 0.1);
+        padding: 10px;
+    }
+
+        .averageDetail-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #3a2c25;
+        }
+
+        .averageDetail-label {
+        font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
+        margin-top: 0.5rem;
+        font-size: 1.2rem;
+        color: #3a2c25;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        }
+
+/* Button Edit */
+.button-edit{
+    background-color: #fb9d18;
+    border: #fb9d18;
+    color: white;
+    border-radius: 30px;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-right: 70%;
+    margin-top: -20px;
+  }
+
+  .button-edit:hover{
+    transform: scale(1.05);
+  }

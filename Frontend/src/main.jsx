@@ -5,13 +5,16 @@ import App from './App.jsx'
 import { YearProvider } from './context/YearContext.jsx'
 import { DivisionProvider } from './context/DivisionContext.jsx'
 import { PositionProvider } from './context/PositionContext.jsx'
+import { TeamProvider } from './context/TeamContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <YearProvider>
       <PositionProvider>
         <DivisionProvider>
-          <App />
+          <TeamProvider>
+            <App />
+          </TeamProvider>
         </DivisionProvider>
       </PositionProvider>
     </YearProvider>
