@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+//CAMBIAR POR DB
 const divisiones = ["Norte", "Sur", "Este", "Oeste"];
+const equipo = ["AA", "BB", "CC"]
 
 const FormsEdit = () => {
   const { id } = useParams();
@@ -127,13 +129,25 @@ const FormsEdit = () => {
         </select>
 
         <label className="label-forms">{labels.equipo}</label>
-        <input
+        <select
+          name="equipo"
+          className="select-action-forms"
+          value={formData.equipo}
+          onChange={handleChange}
+          required
+        >
+          <option value="">--Seleccione--</option>
+          {equipo.map((d) => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+        {/* <input
           type="text"
           name="equipo"
           value={formData.equipo}
           onChange={handleChange}
           required
-        />
+        /> */}
 
         <label className="label-forms">{labels.camisa}</label>
         <input

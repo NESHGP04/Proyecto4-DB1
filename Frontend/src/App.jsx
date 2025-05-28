@@ -13,6 +13,8 @@ import TeamsDivision from '@pages/TeamsDivision';
 import DetailPlayer from '@pages/DetailPlayer';
 import EditPage from '@components/divisiones/detailDivision/EditPage';
 
+import Inscription from '@pages/Inscription';
+
 function App() {
   return (
     <BrowserRouter>
@@ -31,6 +33,9 @@ function App() {
         <Route path="/teams-division/:division/:year" element={<TeamsDivision />} />
         <Route path="/player/:id" element={<DetailPlayer />} />
         <Route path="/player/:id/edit" element={<EditPage />} />
+
+        {/* Inscription */}
+        <Route path="/inscription" element={<Inscription />} />
 
       </Routes>
       
