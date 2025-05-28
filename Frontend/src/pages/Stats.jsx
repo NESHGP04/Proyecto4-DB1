@@ -1,6 +1,6 @@
 import Navbar from "@components/navigation/Navbar";
 import Header from "@components/stats/Header";
-import ButtonsStats from "../components/stats/ButtonsStats";
+import ButtonsStats from "@components/stats/ButtonsStats";
 
 function Stats(){
     return(

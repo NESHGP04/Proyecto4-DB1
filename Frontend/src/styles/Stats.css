@@ -14,7 +14,8 @@
 }
 
 .header {
-  font-size: 4.5rem;
+  font-size: 5rem;
+  line-height: 1.2;
   margin: 0;
   margin-left: 6.5%;
   color: black;

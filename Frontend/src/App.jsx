@@ -11,6 +11,7 @@ import Filder from '@pages/Filder';
 import Divisions from '@pages/Divisiones';
 import TeamsDivision from '@pages/TeamsDivision';
 import DetailPlayer from '@pages/DetailPlayer';
+import EditPage from '@components/divisiones/detailDivision/EditPage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/divisions" element={<Divisions />} />
         <Route path="/teams-division/:division/:year" element={<TeamsDivision />} />
         <Route path="/player/:id" element={<DetailPlayer />} />
+        <Route path="/player/:id/edit" element={<EditPage />} />
 
       </Routes>
       
