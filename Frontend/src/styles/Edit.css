@@ -97,6 +97,7 @@ body, html {
     display: block;
     text-align: left;
     margin-top: 5%;
+    line-height: 1.0;
   }
 
   /* Title */
