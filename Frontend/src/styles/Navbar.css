@@ -34,10 +34,10 @@
   }
   
   .nav-item.active {
-    font-weight: 700;
-    border-bottom: 3px solid white;
+    border-bottom: 2px solid #ffffff; /* subrayado */
+    font-weight: bold; /* opcional */
   }
-  
+
   .logo-container {
     background-color: white;
     border-radius: 100px;
