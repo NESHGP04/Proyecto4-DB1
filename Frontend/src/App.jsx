@@ -14,6 +14,7 @@ import DetailPlayer from '@pages/DetailPlayer';
 import EditPage from '@components/divisiones/detailDivision/EditPage';
 
 import Inscription from '@pages/Inscription';
+import Calendar from '@pages/Calendar';
 
 function App() {
   return (
@@ -36,6 +37,9 @@ function App() {
 
         {/* Inscription */}
         <Route path="/inscription" element={<Inscription />} />
+
+        {/* Calendar */}
+        <Route path="/calendar" element={<Calendar />} />
 
       </Routes>
       
