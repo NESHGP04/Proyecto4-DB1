@@ -79,3 +79,35 @@
   background-color: #e0eaff;
   cursor: pointer;
 }
+
+/* Botones */
+.button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 10px -800px;
+  }  
+
+  .button-agregar,
+  .button-report {
+    margin: 0;
+  }
+  
+  .button-report button {
+    background-color: rgba(37, 110, 75, 0.8);
+    color: white;
+    padding: 12px 50px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    width: auto;
+  }
+
+  .button-report button:hover {
+    transform: scale(1.05);
+  }

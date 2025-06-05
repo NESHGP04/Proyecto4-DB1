@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useDivision } from '@/context/DivisionContext'; // importa el contexto
 
 // Simulación de datos
