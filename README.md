@@ -14,6 +14,15 @@ Proyecto4-DB1/
 │   │   └── schema.prisma     # Esquema Prisma
 │   └── generated/
 │       └── prisma/           # Cliente Prisma generado
+|── Frontend/
+│   ├── src
+|         └── assets          # Imágenes y tipos de letras
+|         └── componets       # Componentes app
+|         └── context         # Hoops app
+|         └── pages           # Páginas app
+|         └── styles          # CSS app
+│   ├── App.jsx               # Rutas app
+│   ├── main.jsx              # Crea app con sus contextos
 └── README.md
 ```
 
@@ -21,7 +30,7 @@ Proyecto4-DB1/
 
 - Node.js ≥ 14  
 - PostgreSQL  
-- npm o yarn  
+- npm  
 
 ## Primeros pasos
 
@@ -47,3 +56,9 @@ Proyecto4-DB1/
    npm install
    npx prisma db pull
    npx prisma
+      ```
+6. Correr Frontend
+   ```frontend
+   cd Frontend
+   npm dev run
+   ```
