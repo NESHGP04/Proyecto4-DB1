@@ -292,3 +292,65 @@ AFTER INSERT OR UPDATE OR DELETE
 ON jugadores_posicion
 FOR EACH ROW
 EXECUTE FUNCTION fn_bitacora_jugadores_posicion();
+
+
+--  Vista de estadísticas de jugadores por temporada
+CREATE VIEW view_jugadores_stats AS
+SELECT
+  j.id                  AS jugador_id,
+  j.nombre              AS nombre_jugador,
+  j.apellido            AS apellido_jugador,
+  tj.id                  AS temporada_id,
+  tj.nombre             AS nombre_temporada,
+  ej.partidos_jugados   AS partidos_jugados,
+  ej.promedio_bateo     AS promedio_bateo,
+  ej.homeruns           AS homeruns,
+  ej.carreras_anotadas  AS carreras_anotadas
+FROM jugadores AS j
+JOIN estadisticas_jugador AS ej
+  ON j.id = ej.jugador_id
+JOIN temporadas AS tj
+  ON ej.temporada_id = tj.id;
+
+-- Vista de ranking de equipos por torneo
+CREATE VIEW view_equipos_ranking AS
+SELECT
+  re.torneo_id              AS torneo_id,
+  t.nombre                  AS nombre_torneo,
+  re.equipo_id              AS equipo_id,
+  e.nombre                  AS nombre_equipo,
+  re.division_id            AS division_id,
+  d.nombre                  AS nombre_division,
+  re.puntos                 AS puntos,
+  re.partidos_ganados       AS partidos_ganados,
+  re.partidos_perdidos      AS partidos_perdidos,
+  re.partidos_empatados     AS partidos_empatados
+FROM ranking_equipos_torneo AS re
+JOIN torneos AS t
+  ON re.torneo_id = t.id
+JOIN equipos AS e
+  ON re.equipo_id = e.id
+JOIN division AS d
+  ON re.division_id = d.id;
+
+-- Vista de detalles de cada partido
+CREATE VIEW view_partidos_detalles AS
+SELECT
+  p.id                       AS partido_id,
+  p.fecha_hora               AS fecha_hora,
+  el.id                      AS equipo_local_id,
+  el.nombre                  AS nombre_equipo_local,
+  ev.id                      AS equipo_visitante_id,
+  ev.nombre                  AS nombre_equipo_visitante,
+  p.score_local              AS score_local,
+  p.score_visitante          AS score_visitante,
+  p.resultado                AS resultado_partido,
+  s.id                       AS estadio_id,
+  s.nombre                   AS nombre_estadio
+FROM partidos AS p
+JOIN equipos AS el
+  ON p.equipo_local_id = el.id
+JOIN equipos AS ev
+  ON p.equipo_visitante_id = ev.id
+JOIN estadios AS s
+  ON p.estadio_id = s.id;

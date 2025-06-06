@@ -75,6 +75,9 @@ app.use("/api/temporadas", temporadasRouter);
 const torneosRouter = require("./routes/torneos");
 app.use("/api/torneos", torneosRouter);
 
+const cosasExtraRouter = require("./routes/cosasExtra");
+app.use("/api/cosas_extra", cosasExtraRouter);
+
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
