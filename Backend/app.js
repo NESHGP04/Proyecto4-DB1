@@ -42,6 +42,39 @@ app.use("/api/estadisticas_jugador", estadisticasJugadorRouter);
 const estadisticasPartidoRouter = require("./routes/estadisticasPartido");
 app.use("/api/estadisticas_partido", estadisticasPartidoRouter);
 
+const estadisticasPitcherRouter = require("./routes/estadisticasPitcher");
+app.use("/api/estadisticas_pitcher", estadisticasPitcherRouter);
+
+const fotosJugadoresRouter = require("./routes/fotosJugadores");
+app.use("/api/fotos_jugadores", fotosJugadoresRouter);
+
+const jugadoresRouter = require("./routes/jugadores");
+app.use("/api/jugadores", jugadoresRouter);
+
+const jugadoresPosicionRouter = require("./routes/jugadoresPosicion");
+app.use("/api/jugadores_posicion", jugadoresPosicionRouter);
+
+const lesionesRouter = require("./routes/lesiones");
+app.use("/api/lesiones", lesionesRouter);
+
+const partidosRouter = require("./routes/partidos");
+app.use("/api/partidos", partidosRouter);
+
+const posicionesRouter = require("./routes/posiciones");
+app.use("/api/posiciones", posicionesRouter);
+
+const rankingEquiposTorneoRouter = require("./routes/rankingEquiposTorneo");
+app.use("/api/ranking_equipos_torneo", rankingEquiposTorneoRouter);
+
+const sancionesRouter = require("./routes/sanciones");
+app.use("/api/sanciones", sancionesRouter);
+
+const temporadasRouter = require("./routes/temporadas");
+app.use("/api/temporadas", temporadasRouter);
+
+const torneosRouter = require("./routes/torneos");
+app.use("/api/torneos", torneosRouter);
+
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
