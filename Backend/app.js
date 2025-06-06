@@ -5,6 +5,11 @@ const { PrismaClient } = require("@prisma/client");
 const app = express();
 const prisma = new PrismaClient();
 
+//Funcionamiento API
+app.get("/", (req, res) => {
+  res.send("API de Liga de Softbol funcionando");
+});
+
 // Middlewares
 app.use(cors());
 app.use(express.json());
