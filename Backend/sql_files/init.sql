@@ -231,3 +231,17 @@ INSERT INTO ranking_equipos_torneo (torneo_id, equipo_id, division_id, puntos, p
 (1, 8, 4, 7, 2, 4, 0),
 (1, 9, 5, 13, 4, 1, 1),
 (1, 10, 5, 6, 1, 5, 0);
+
+INSERT INTO estadisticas_jugador (
+  jugador_id, temporada_id, partidos_jugados, promedio_bateo, homeruns, carreras_anotadas
+) VALUES
+(1, 1, 12, 0.350, 5, 15),
+(2, 2, 10, 0.280, 2, 8),
+(3, 3, 14, 0.400, 7, 18),
+(4, 4, 9,  0.310, 3, 10),
+(5, 5, 11, 0.270, 1, 6),
+(6, 6, 13, 0.390, 6, 16),
+(7, 7, 10, 0.300, 2, 9),
+(8, 8, 12, 0.325, 4, 11),
+(9, 9, 8,  0.290, 1, 5),
+(10, 10, 15, 0.410, 8, 20);
