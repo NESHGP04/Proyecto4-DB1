@@ -1,9 +1,9 @@
-import { useYear } from '@/context/YearContext';
+import { useTemporada } from '@context/TemporadaContext';
 import { useDivision } from '@context/DivisionContext';
 import { useDivisiones } from '@/hooks/useDivisiones'; // Hook a divisiones
 
 function HeaderPos(){
-    const { year } = useYear(); // accede al año compartido
+    const { temporadaSeleccionada } = useTemporada();
     const { division, setDivision } = useDivision();
     const { divisiones, loading } = useDivisiones();
 
@@ -13,7 +13,9 @@ function HeaderPos(){
              <h1 className="headerpos">Picheo</h1>
         </div>
 
-        <p className="year">{year}</p>
+        <p className="year">
+          {temporadaSeleccionada ? `- ${temporadaSeleccionada.nombre}` : ""}
+        </p>
 
         <div className='selectors-container'>
             {loading ? (

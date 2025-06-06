@@ -1,5 +1,4 @@
-export default function AveSquare({ employee, onBack }) {
-
+export default function AveSquare() {
   return (
       <div className="average-box">
         <div className="average-value">

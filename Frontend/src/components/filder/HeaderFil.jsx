@@ -1,15 +1,15 @@
-import { useYear } from '@/context/YearContext';
+import { useTemporada } from '@context/TemporadaContext';
 import { useDivision } from '@context/DivisionContext';
 import { usePosition } from '@/context/PositionContext';
 import { useDivisiones } from '@/hooks/useDivisiones'; // Hook a divisiones
-
-const positionsDisponibles = ['Catcher', '1B', '2B', 'SS', '3B', 'RF', 'CF', 'LF']
+import { usePosiciones } from "@/hooks/usePosiciones";
 
 function HeaderPos(){
-    const { year } = useYear(); // accede al año compartido
+    const { temporadaSeleccionada } = useTemporada();
     const { division, setDivision } = useDivision();
     const { position, setPosition } = usePosition();
     const { divisiones, loading } = useDivisiones();
+    const { posiciones, loading: loadingPosiciones } = usePosiciones();
 
     return(
         <>
@@ -17,7 +17,9 @@ function HeaderPos(){
              <h1 className="headerpos">Filders</h1>
         </div>
 
-        <p className="year">{year}</p>
+        <p className="year">
+          {temporadaSeleccionada ? `- ${temporadaSeleccionada.nombre}` : ""}
+        </p>
 
         <div className='selectors-container'> 
             {loading ? (
@@ -37,17 +39,22 @@ function HeaderPos(){
             </select>
             )}
 
+            {loadingPosiciones ? (
+            <p>Cargando posiciones...</p>
+            ) : (
             <select
-                    className="division-selector"
-                    value={position}
-                    onChange={(e) => setPosition(e.target.value)}
-                >
-                    {positionsDisponibles.map((div) => (
-                        <option key={div} value={div}>
-                            {div}
-                        </option>
-                    ))}
+                className="division-selector"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+            >
+                <option value="">Selecciona una posición</option>
+                {posiciones.map((pos) => (
+                <option key={pos.id} value={pos.nombre}>
+                    {pos.nombre}
+                </option>
+                ))}
             </select>
+            )}
         </div>
         </>
     );

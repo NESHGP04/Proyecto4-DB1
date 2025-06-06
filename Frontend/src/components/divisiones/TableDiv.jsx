@@ -1,10 +1,10 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useYear } from '@/context/YearContext';
+import { useTemporada } from '@context/TemporadaContext';
 
 function TableDiv() {
     const navigate = useNavigate();
-    const { year } = useYear(); // accede al año compartido
+    const { temporadaSeleccionada } = useTemporada();
     const [divisiones, setDivisiones] = useState([]);
 
     //Llama API
@@ -18,11 +18,11 @@ function TableDiv() {
 
     //Filtra por año
      const goToDivision = (division) => {
-        if (!year) {
-        alert("Por favor selecciona un año antes de ver la división.");
+        if (!temporadaSeleccionada) {
+        alert("Por favor selecciona una temporada antes de ver la división.");
         return;
         }
-        navigate(`/teams-division/${division}/${year}`);
+        navigate(`/teams-division/${division}/${temporadaSeleccionada.anio}`);
     };
 
   return (

@@ -1,22 +1,44 @@
-import { useYear } from '@context/YearContext';
+import { useState, useEffect } from 'react';
+import { useTemporada } from '@context/TemporadaContext';
 import '@styles/Divisiones.css'
 
 function HeaderDiv(){
-    const { year, setYear } = useYear();
+    const { temporadaSeleccionada, setTemporadaSeleccionada } = useTemporada();
+    const [temporadas, setTemporadas] = useState([]);
+
+    useEffect(() => {
+            fetch("http://localhost:3001/api/temporadas")
+            .then((res) => res.json())
+            .then((data) => {
+                setTemporadas(data);
+                if (data.length > 0 && !temporadaSeleccionada) {
+                setTemporadaSeleccionada(data[0]);
+                }
+            });
+        }, []);
 
     const handleChange = (e) => {
-        const selectedYear = parseInt(e.target.value);
-        setYear(selectedYear);
+        const selectedId = parseInt(e.target.value);
+        const temporada = temporadas.find((t) => t.id === selectedId);
+        if (temporada) {
+        setTemporadaSeleccionada(temporada);
+        }
     };
 
     return (
      <>
         <div className="header-container">
-            <h1 className="header">Divisiones {year}</h1>
-            <select value={year} onChange={handleChange} className="year-selector">
-            {Array.from({ length: 10 }, (_, i) => 2024 - i).map((y) => (
-                <option key={y} value={y}>{y}</option>
-            ))}
+            <h1 className="header">Divisiones {temporadaSeleccionada?.nombre || ""}</h1>
+            <select
+                value={temporadaSeleccionada?.id || ""}
+                onChange={handleChange}
+                className="year-selector"
+                >
+                {temporadas.map((t) => (
+                    <option key={t.id} value={t.id}>
+                    {t.nombre}
+                    </option>
+                ))}
             </select>
         </div>
     </>   
