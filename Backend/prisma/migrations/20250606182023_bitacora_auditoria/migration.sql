@@ -354,3 +354,159 @@ JOIN equipos AS ev
   ON p.equipo_visitante_id = ev.id
 JOIN estadios AS s
   ON p.estadio_id = s.id;
+
+
+----vista de estadísticas de jugadores (Fielders) por temporada
+CREATE VIEW view_fielder_stats AS
+SELECT
+  j.id                                                        AS id,
+  j.nombre || ' ' || j.apellido                                AS nombre,
+  d.nombre                                                     AS division,
+  ej.promedio_bateo                                            AS average,
+  -- Ganados = conteo de partidos en que el equipo del jugador venció al oponente
+  SUM(
+    CASE
+      WHEN (p.equipo_local_id = j.equipo_id AND p.score_local > p.score_visitante)
+        OR (p.equipo_visitante_id = j.equipo_id AND p.score_visitante > p.score_local)
+      THEN 1
+      ELSE 0
+    END
+  )                                                             AS ganados,
+  -- Perdidos = conteo de partidos en que el equipo del jugador perdió
+  SUM(
+    CASE
+      WHEN (p.equipo_local_id = j.equipo_id AND p.score_local < p.score_visitante)
+        OR (p.equipo_visitante_id = j.equipo_id AND p.score_visitante < p.score_local)
+      THEN 1
+      ELSE 0
+    END
+  )                                                             AS perdidos,
+  ej.partidos_jugados                                           AS total,
+  e.nombre                                                      AS equipo,
+  pos.nombre                                                    AS position
+FROM jugadores AS j
+  -- Solo tomamos a “Fielders”, es decir: jugadores cuya posición no sea pitcher
+  JOIN jugadores_posicion AS jp
+    ON jp.jugador_id = j.id
+  JOIN posiciones AS pos
+    ON pos.id = jp.posicion_id
+  JOIN estadisticas_jugador AS ej
+    ON ej.jugador_id = j.id
+     AND ej.temporada_id = jp.temporada_id
+  -- A fin de contar partidos ganados/perdidos, unimos jugadore ↔ partidos
+  JOIN partidos AS p
+    ON p.equipo_local_id = j.equipo_id
+       OR p.equipo_visitante_id = j.equipo_id
+  JOIN equipos AS e
+    ON e.id = j.equipo_id
+  JOIN division AS d
+    ON d.id = e.division_id
+WHERE pos.nombre <> 'pitcher'
+GROUP BY
+  j.id,
+  j.nombre,
+  j.apellido,
+  d.nombre,
+  ej.promedio_bateo,
+  ej.partidos_jugados,
+  e.nombre,
+  pos.nombre;
+
+
+----- Vista de estadísticas de pitchers por temporada
+CREATE VIEW view_pitcher_stats AS
+SELECT
+  j.id                                                        AS id,
+  j.nombre || ' ' || j.apellido                                AS nombre,
+  d.nombre                                                     AS division,
+  ep.innings_lanzados                                          AS average,
+  -- Ganados: conteo de partidos en que el equipo del pitcher ganó
+  SUM(
+    CASE
+      WHEN (p.equipo_local_id = j.equipo_id AND p.score_local > p.score_visitante)
+        OR (p.equipo_visitante_id = j.equipo_id AND p.score_visitante > p.score_local)
+      THEN 1
+      ELSE 0
+    END
+  )                                                             AS ganados,
+  -- Perdidos: conteo de partidos en que el equipo del pitcher perdió
+  SUM(
+    CASE
+      WHEN (p.equipo_local_id = j.equipo_id AND p.score_local < p.score_visitante)
+        OR (p.equipo_visitante_id = j.equipo_id AND p.score_visitante < p.score_local)
+      THEN 1
+      ELSE 0
+    END
+  )                                                             AS perdidos,
+  COUNT(ep.partido_id)                                          AS total,
+  e.nombre                                                      AS equipo
+FROM jugadores AS j
+  JOIN jugadores_posicion AS jp
+    ON jp.jugador_id = j.id
+  JOIN posiciones AS pos
+    ON pos.id = jp.posicion_id
+   AND pos.nombre = 'pitcher'     -- Solo quienes juegan como pitcher
+  JOIN estadisticas_pitcher AS ep
+    ON ep.jugador_id = j.id
+  JOIN partidos AS p
+    ON p.id = ep.partido_id       -- Solo los partidos en los que efectivamente lanzó
+  JOIN equipos AS e
+    ON e.id = j.equipo_id
+  JOIN division AS d
+    ON d.id = e.division_id
+GROUP BY
+  j.id,
+  j.nombre,
+  j.apellido,
+  d.nombre,
+  ep.innings_lanzados,
+  e.nombre;
+
+
+
+-- Vista de estadísticas de bateadores por temporada
+CREATE VIEW view_atbat_stats AS
+SELECT
+  j.id                                                        AS id,
+  j.nombre || ' ' || j.apellido                                AS nombre,
+  d.nombre                                                     AS division,
+  -- average = SUM(hits) / COUNT(de sus apariciones en estadisticas_partido)
+  ROUND(
+    CAST(SUM(ep.hits) AS numeric) / NULLIF(COUNT(ep.jugador_id), 0),
+    3
+  )                                                             AS average,
+  -- Ganados: conteo de partidos en que el equipo del bateador ganó
+  SUM(
+    CASE
+      WHEN (p.equipo_local_id = j.equipo_id AND p.score_local > p.score_visitante)
+        OR (p.equipo_visitante_id = j.equipo_id AND p.score_visitante > p.score_local)
+      THEN 1
+      ELSE 0
+    END
+  )                                                             AS ganados,
+  -- Perdidos: conteo de partidos en que el equipo del bateador perdió
+  SUM(
+    CASE
+      WHEN (p.equipo_local_id = j.equipo_id AND p.score_local < p.score_visitante)
+        OR (p.equipo_visitante_id = j.equipo_id AND p.score_visitante < p.score_local)
+      THEN 1
+      ELSE 0
+    END
+  )                                                             AS perdidos,
+  COUNT(ep.jugador_id)                                          AS total,
+  e.nombre                                                      AS equipo
+FROM jugadores AS j
+  JOIN estadisticas_partido AS ep
+    ON ep.jugador_id = j.id
+  JOIN partidos AS p
+    ON p.id = ep.partido_id
+  JOIN equipos AS e
+    ON e.id = j.equipo_id
+  JOIN division AS d
+    ON d.id = e.division_id
+GROUP BY
+  j.id,
+  j.nombre,
+  j.apellido,
+  d.nombre,
+  e.nombre;
