@@ -34,7 +34,7 @@ router.get("/:id", async (req, res) => {
 
 //  Crear un nuevo torneo (todos los campos obligatorios y verificación de FK)
 router.post("/", async (req, res) => {
-  const { nombre, division_id, fecha_inicio, fecha_fin, estado, temporada } =
+  const { nombre, division_id, fecha_inicio, fecha_fin, estado, temporada_id } =
     req.body;
 
   // Validar que todos los campos obligatorios estén presentes
@@ -53,14 +53,22 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "La división no existe" });
     }
 
+    // Verificar FK temporada
+    const temporada = await prisma.temporadas.findUnique({
+      where: { id: parseInt(temporada_id) },
+    });
+    if (!temporada) {
+      return res.status(404).json({ error: "La temporada no existe" });
+    }
+
     const nuevoTorneo = await prisma.torneos.create({
       data: {
         nombre,
         division_id: parseInt(division_id),
+        temporada_id: parseInt(temporada_id),
         fecha_inicio: new Date(fecha_inicio),
         fecha_fin: new Date(fecha_fin),
         estado: estado || "activo",
-        temporada,
       },
     });
     res.status(201).json(nuevoTorneo);

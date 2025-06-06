@@ -69,6 +69,7 @@ model equipos {
   partidos_partidos_equipo_visitante_idToequipos partidos[]               @relation("partidos_equipo_visitante_idToequipos")
   ranking_equipos_torneo                         ranking_equipos_torneo[]
   sanciones                                      sanciones[]
+  auditoria_equipos                              auditoria_equipos[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -153,6 +154,7 @@ model jugadores {
   jugadores_posicion   jugadores_posicion[]
   lesiones             lesiones[]
   sanciones            sanciones[]
+  auditoria_jugadores  auditoria_jugadores[]
 
   @@unique([nombre, apellido, fecha_nacimiento])
 }
@@ -242,12 +244,13 @@ model temporadas {
   calendario           calendario[]
   estadisticas_jugador estadisticas_jugador[]
   jugadores_posicion   jugadores_posicion[]
+  torneos              torneos[]
 }
 
 model torneos {
   id                     Int                      @id @default(autoincrement())
   nombre                 String                   @unique @db.VarChar(100)
-  temporada              String?                  @db.VarChar(50)
+  temporada_id           Int
   division_id            Int
   fecha_inicio           DateTime                 @db.Date
   fecha_fin              DateTime                 @db.Date
@@ -255,6 +258,40 @@ model torneos {
   partidos               partidos[]
   ranking_equipos_torneo ranking_equipos_torneo[]
   division               division                 @relation(fields: [division_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  temporadas             temporadas               @relation(fields: [temporada_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Bitacora {
+  id             Int           @id @default(autoincrement())
+  fecha_hora     DateTime      @default(now()) @db.Timestamp(6)
+  tabla_afectada TablaEnum
+  operacion      OperacionEnum
+  registro_id    Int?
+  usuario_id     Int?
+  detalles       Json?
+
+  @@index([fecha_hora])
+  @@index([tabla_afectada, operacion])
+}
+
+model auditoria_equipos {
+  id        Int           @id @default(autoincrement())
+  id_equipo Int?
+  operacion OperacionEnum
+  fecha     DateTime?     @default(now()) @db.Timestamp(6)
+  equipos   equipos?      @relation(fields: [id_equipo], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id_equipo])
+}
+
+model auditoria_jugadores {
+  id         Int           @id @default(autoincrement())
+  id_jugador Int?
+  operacion  OperacionEnum
+  fecha      DateTime?     @default(now()) @db.Timestamp(6)
+  jugadores  jugadores?    @relation(fields: [id_jugador], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id_jugador])
 }
 
 enum estado_lesion_enum {
@@ -300,4 +337,33 @@ enum tipo_estadistica_enum {
   bateo
   pitcheo
   defensa
+}
+
+enum OperacionEnum {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum TablaEnum {
+  arbitros
+  arbitraje
+  calendario
+  division
+  entrenadores
+  equipos
+  estadios
+  estadisticas_jugador
+  estadisticas_partido
+  estadisticas_pitcher
+  fotos_jugadores
+  jugadores
+  jugadores_posicion
+  lesiones
+  partidos
+  posiciones
+  ranking_equipos_torneo
+  sanciones
+  temporadas
+  torneos
 }
