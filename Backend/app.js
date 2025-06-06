@@ -5,14 +5,14 @@ const { PrismaClient } = require("@prisma/client");
 const app = express();
 const prisma = new PrismaClient();
 
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
 //Funcionamiento API
 app.get("/", (req, res) => {
   res.send("API de Liga de Softbol funcionando");
 });
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
 
 // Rutas
 const arbitrajeRouter = require("./routes/arbitraje");

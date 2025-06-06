@@ -1,15 +1,15 @@
 import { useYear } from '@/context/YearContext';
 import { useDivision } from '@context/DivisionContext';
 import { usePosition } from '@/context/PositionContext';
+import { useDivisiones } from '@/hooks/useDivisiones'; // Hook a divisiones
 
-//Traer de DB
-const divisionesDisponibles = ['Norte', 'Sur', 'Este', 'Oeste'];
 const positionsDisponibles = ['Catcher', '1B', '2B', 'SS', '3B', 'RF', 'CF', 'LF']
 
 function HeaderPos(){
     const { year } = useYear(); // accede al año compartido
     const { division, setDivision } = useDivision();
     const { position, setPosition } = usePosition();
+    const { divisiones, loading } = useDivisiones();
 
     return(
         <>
@@ -20,17 +20,22 @@ function HeaderPos(){
         <p className="year">{year}</p>
 
         <div className='selectors-container'> 
+            {loading ? (
+            <p>Cargando divisiones...</p>
+            ) : (
             <select
                 className="division-selector"
                 value={division}
                 onChange={(e) => setDivision(e.target.value)}
             >
-                {divisionesDisponibles.map((div) => (
-                    <option key={div} value={div}>
-                        {div}
-                    </option>
+                <option value="">Selecciona una división</option>
+                {divisiones.map((div) => (
+                <option key={div.id} value={div.id}>
+                    {div.nombre}
+                </option>
                 ))}
             </select>
+            )}
 
             <select
                     className="division-selector"

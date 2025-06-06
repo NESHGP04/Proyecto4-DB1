@@ -98,6 +98,7 @@
   .button-report button {
     background-color: rgba(37, 110, 75, 0.8);
     color: white;
+    font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
     padding: 12px 50px;
     border-radius: 12px;
     border: none;

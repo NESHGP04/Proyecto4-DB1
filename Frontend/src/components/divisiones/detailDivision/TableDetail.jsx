@@ -1,30 +1,41 @@
-import React from "react";
+import { useParams } from "react-router-dom";
+import { useDivision } from '@/context/DivisionContext';
+import { useTeam } from '@/context/TeamContext';
+import { useEstadisticas } from '@/hooks/useEstadisticas';
 
-const rows = [
-  {
-    id: 1,
-    nombre: "Juan",
-    equipo: "AA",
-    AB: 10,
-    TO: 3,
-    TH: 7,
-    H1: 2,
-    H2: 2,
-    H3: 1,
-    HR: 2,
-    CA: 5,
-    CI: 3,
-    BR: 1,
-    K: 2,
-    BB: 1,
-    BG: 1,
-    JB: 1,
-    AVE: 0.7,
-  },
-];
+// const rows = [
+//   {
+//     id: 1,
+//     nombre: "Juan",
+//     equipo: "AA",
+//     AB: 10,
+//     TO: 3,
+//     TH: 7,
+//     H1: 2,
+//     H2: 2,
+//     H3: 1,
+//     HR: 2,
+//     CA: 5,
+//     CI: 3,
+//     BR: 1,
+//     K: 2,
+//     BB: 1,
+//     BG: 1,
+//     JB: 1,
+//     AVE: 0.7,
+//   },
+// ];
 
 function TableDetail() {
-  const filteredRows = rows; // si más adelante filtras por jugador, cambia aquí
+  const { id: jugadorId } = useParams();
+  const { division: divisionId } = useDivision();
+  const { team: equipoId } = useTeam();
+  const { stats, loading } = useEstadisticas(jugadorId, divisionId, equipoId);
+
+    if (loading) return <p>Cargando estadísticas...</p>;
+    if (!stats.length) return <p>No se encontraron estadísticas para este jugador.</p>;
+
+  const filteredRows = stats;
 
   // Calcular totales
   const totals = filteredRows.reduce(
@@ -69,7 +80,7 @@ function TableDetail() {
       ? (
           filteredRows.reduce((sum, row) => sum + row.AVE, 0) /
           filteredRows.length
-        ).toFixed(2)
+        ).toFixed(3) //era 2
       : 0;
 
   return (
@@ -96,8 +107,8 @@ function TableDetail() {
           </tr>
         </thead>
         <tbody>
-          {filteredRows.map((row) => (
-            <tr key={row.id}>
+          {filteredRows.map((row, idx) => (
+            <tr key={idx}>
               <td>{row.AB}</td>
               <td>{row.TO}</td>
               <td>{row.TH}</td>
@@ -112,7 +123,7 @@ function TableDetail() {
               <td>{row.BB}</td>
               <td>{row.BG}</td>
               <td>{row.JB}</td>
-              <td>{row.AVE}</td>
+              <td>{row.AVE.toFixed(3)}</td>
             </tr>
           ))}
           {filteredRows.length > 0 && (
@@ -176,7 +187,7 @@ function TableDetail() {
               <td>{row.BB}</td>
               <td>{row.BG}</td>
               <td>{row.JB}</td>
-              <td>{row.AVE}</td>
+              <td>{row.AVE.toFixed(3)}</td>
             </tr>
           ))}
           {filteredRows.length > 0 && (

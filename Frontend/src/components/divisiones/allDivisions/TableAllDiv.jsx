@@ -1,25 +1,33 @@
 import { useNavigate } from "react-router-dom";
+import { useDivision } from "@/context/DivisionContext";
+import { useEstadisticas } from "@/hooks/useEstadisticas";
 
-const rows = [
-  { id: 1, nombre: "Juan", equipo: "AA", AB: 10, TO: 3, TH: 7, H1: 2, H2: 2, H3: 1, HR: 2, CA: 5, CI: 3, BR: 1, K: 2, BB: 1, BG: 1, JB: 1, AVE: 0.7 },
-  { id: 2, nombre: "Pepe", equipo: "BB", AB: 15, TO: 5, TH: 10, H1: 4, H2: 2, H3: 2, HR: 2, CA: 4, CI: 2, BR: 0, K: 3, BB: 1, BG: 2, JB: 0, AVE: 0.66 },
-  { id: 3, nombre: "José", equipo: "CC", AB: 20, TO: 4, TH: 16, H1: 6, H2: 5, H3: 3, HR: 2, CA: 6, CI: 5, BR: 2, K: 1, BB: 2, BG: 3, JB: 2, AVE: 0.8 }
-];
+// const rows = [
+//   { id: 1, nombre: "Juan", equipo: "AA", AB: 10, TO: 3, TH: 7, H1: 2, H2: 2, H3: 1, HR: 2, CA: 5, CI: 3, BR: 1, K: 2, BB: 1, BG: 1, JB: 1, AVE: 0.7 },
+//   { id: 2, nombre: "Pepe", equipo: "BB", AB: 15, TO: 5, TH: 10, H1: 4, H2: 2, H3: 2, HR: 2, CA: 4, CI: 2, BR: 0, K: 3, BB: 1, BG: 2, JB: 0, AVE: 0.66 },
+//   { id: 3, nombre: "José", equipo: "CC", AB: 20, TO: 4, TH: 16, H1: 6, H2: 5, H3: 3, HR: 2, CA: 6, CI: 5, BR: 2, K: 1, BB: 2, BG: 3, JB: 2, AVE: 0.8 }
+// ];
 
 export default function TableAllDiv({ selectedTeam }) {
   const navigate = useNavigate();
-  const filteredRows = rows.filter((row) => row.equipo === selectedTeam);
+  // const filteredRows = rows.filter((row) => row.equipo === selectedTeam);
+  const { division: divisionId } = useDivision();
 
-  const totals = filteredRows.reduce((acc, row) => {
+  const { stats, loading } = useEstadisticas(null, divisionId, selectedTeam);
+
+  if (loading) return <p>Cargando estadísticas...</p>;
+  if (!stats || stats.length === 0) return <p>No hay estadísticas disponibles.</p>;
+
+  const totals = stats.reduce((acc, row) => {
     Object.keys(row).forEach((key) => {
       if (key !== "id" && key !== "nombre" && key !== "equipo") {
-        acc[key] = (acc[key] || 0) + row[key];
+        acc[key] = (acc[key] || 0) + (row[key] || 0);
       }
     });
     return acc;
   }, {});
 
-  const aveTotal = filteredRows.length > 0 ? (totals.AVE / filteredRows.length).toFixed(2) : "0.00";
+  const aveTotal = stats.length > 0 ? (totals.AVE / stats.length).toFixed(2) : "0.00";
 
   const handlePlayerClick = (id) => {
     navigate(`/player/${id}`);
@@ -49,7 +57,7 @@ export default function TableAllDiv({ selectedTeam }) {
           </tr>
         </thead>
         <tbody>
-          {filteredRows.map((row) => (
+          {stats.map((row) => (
             <tr key={row.id}>
               <td
                 className="clickable-player"
@@ -75,7 +83,7 @@ export default function TableAllDiv({ selectedTeam }) {
               <td>{row.AVE}</td>
             </tr>
           ))}
-          {filteredRows.length > 0 && (
+          {stats.length > 0 && (
             <tr className="total-row">
               <td><strong>Total</strong></td>
               <td>{totals.AB}</td>

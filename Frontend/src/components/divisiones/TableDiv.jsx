@@ -1,10 +1,22 @@
 import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useYear } from '@/context/YearContext';
 
 function TableDiv() {
     const navigate = useNavigate();
     const { year } = useYear(); // accede al año compartido
+    const [divisiones, setDivisiones] = useState([]);
 
+    //Llama API
+    useEffect(() => {
+      // Cambia la URL a la que usas para obtener divisiones
+      fetch("http://localhost:3001/api/division")
+        .then((res) => res.json())
+        .then((data) => setDivisiones(data))
+        .catch((error) => console.error("Error al cargar divisiones:", error));
+    }, []);
+
+    //Filtra por año
      const goToDivision = (division) => {
         if (!year) {
         alert("Por favor selecciona un año antes de ver la división.");
@@ -18,68 +30,19 @@ function TableDiv() {
       <table className="position-table">
         <thead>
           <tr>
-            <th>Masculina</th>
-            <th>Femenina</th>
+            <th>Divisiones</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td onClick={() => goToDivision("Mayor A Masculina")}>Mayor A</td>
-            <td onClick={() => goToDivision("Mayor A Femenina")}>Mayor A</td>
-          </tr>
-          <tr>
-            <td onClick={() => goToDivision("Mayor B Masculina")}>Mayor B</td>
-            <td onClick={() => goToDivision("Mayor B Femenina")}>Mayor B</td>
-          </tr>
-          <tr>
-            <td onClick={() => goToDivision("Especial Masculina")}>Especial</td>
-            <td onClick={() => goToDivision("Especial Femenina")}>Especial</td>
-          </tr>
-          <tr>
-            <td onClick={() => goToDivision("1ra Division Masculina")}>1ra División</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td onClick={() => goToDivision("2da Division Masculina")}>2da División</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td onClick={() => goToDivision("3ra Division Masculina")}>3ra División</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td onClick={() => goToDivision("4ta Division Masculina")}>4ta División</td>
-            <td></td>
-          </tr>
-
-          {/* Categorías mixtas */}
-          <tr>
-            <td
-              colSpan={2}
-              style={{ textAlign: "center", fontWeight: "bold", cursor: "pointer" }}
-              onClick={() => goToDivision("BolaLentaA")}
+          {divisiones.map((division) => (
+            <tr
+              key={division.id}
+              style={{ cursor: "pointer" }}
+              onClick={() => goToDivision(division.nombre)}
             >
-              Bola Lenta A
-            </td>
-          </tr>
-          <tr>
-            <td
-              colSpan={2}
-              style={{ textAlign: "center", fontWeight: "bold", cursor: "pointer" }}
-              onClick={() => goToDivision("BolaLentaB")}
-            >
-              Bola Lenta B
-            </td>
-          </tr>
-          <tr>
-            <td
-              colSpan={2}
-              style={{ textAlign: "center", fontWeight: "bold", cursor: "pointer" }}
-              onClick={() => goToDivision("BolaLentaC")}
-            >
-              Bola Lenta C
-            </td>
-          </tr>
+              <td>{division.nombre}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

@@ -151,4 +151,59 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// GET estadísticas por filtros
+router.get("/filter", async (req, res) => {
+  const { jugadorId, divisionId, equipoId } = req.query;
+
+  try {
+    const stats = await prisma.estadisticas_jugador.findMany({
+      where: {
+        jugador_id: jugadorId ? parseInt(jugadorId) : undefined,
+        temporadas: divisionId
+          ? { division_id: parseInt(divisionId) }
+          : undefined,
+        jugadores: equipoId
+          ? { equipo_id: parseInt(equipoId) }
+          : undefined,
+      },
+      include: {
+        jugadores: {
+          include: {
+            equipo: true, // para traer el nombre del equipo si tienes relación
+          },
+        },
+        temporadas: true,
+      },
+    });
+
+    // Transformar los datos para exponer nombre del jugador y nombre del equipo directamente
+    const transformed = stats.map((stat) => ({
+      id: stat.id,
+      nombre: stat.jugadores?.nombre || "Sin nombre",
+      equipo: stat.jugadores?.equipo?.nombre || "Sin equipo",
+      AB: stat.AB,
+      TO: stat.TO,
+      TH: stat.TH,
+      H1: stat.H1,
+      H2: stat.H2,
+      H3: stat.H3,
+      HR: stat.HR,
+      CA: stat.CA,
+      CI: stat.CI,
+      BR: stat.BR,
+      K: stat.K,
+      BB: stat.BB,
+      BG: stat.BG,
+      JB: stat.JB,
+      AVE: stat.AVE,
+    }));
+
+    res.json(transformed);
+  } catch (error) {
+    console.error("Error al filtrar estadísticas:", error);
+    res.status(500).json({ error: "Error al filtrar estadísticas" });
+  }
+});
+
+
 module.exports = router;
