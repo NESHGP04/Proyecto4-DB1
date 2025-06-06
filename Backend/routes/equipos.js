@@ -104,4 +104,19 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Obtener jugadores por equipo_id
+router.get("/equipo/:equipoId", async (req, res) => {
+  const { equipoId } = req.params;
+  try {
+    const jugadores = await prisma.jugadores.findMany({
+      where: { equipo_id: parseInt(equipoId) },
+      orderBy: { nombre: "asc" },
+    });
+    res.json(jugadores);
+  } catch (error) {
+    console.error("Error al obtener jugadores por equipo:", error);
+    res.status(500).json({ error: "Error al obtener jugadores del equipo" });
+  }
+});
+
 module.exports = router;

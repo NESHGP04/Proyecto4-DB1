@@ -22,7 +22,7 @@ function TableDiv() {
         alert("Por favor selecciona una temporada antes de ver la división.");
         return;
         }
-        navigate(`/teams-division/${division}/${temporadaSeleccionada.anio}`);
+        navigate(`/teams-division/${division}/${temporadaSeleccionada.nombre}`);
     };
 
   return (

@@ -53,7 +53,7 @@ function TablePos() {
         </tbody>
       </table>
 
-    <p>HITS</p>
+    <p>HOMERUN</p>
       <table className="position-table">
         <thead>
           <tr>
@@ -78,7 +78,7 @@ function TablePos() {
         </tbody>
       </table>
 
-      <p>SENCILLOS</p>
+      <p>CARRERAS ANOTADAS</p>
       <table className="position-table">
         <thead>
           <tr>
@@ -98,56 +98,6 @@ function TablePos() {
               </td>
               <td>{emp.equipo}</td>
               <td>{emp.perdidos.toFixed(3)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <p>DOBLES</p>
-      <table className="position-table">
-        <thead>
-          <tr>
-            <th>Jugador</th>
-            <th>EQP</th>
-            <th>H2</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRows.map((emp, index) => (
-            <tr
-              key={emp.id}
-              className="position-row"
-            >
-              <td>
-                {emp.nombre}
-              </td>
-              <td>{emp.equipo}</td>
-              <td>{emp.ganados.toFixed(3)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <p>TRIPLES</p>
-      <table className="position-table">
-        <thead>
-          <tr>
-            <th>Jugador</th>
-            <th>EQP</th>
-            <th>H3</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRows.map((emp) => (
-            <tr
-              key={emp.id}
-              className="position-row"
-            >
-              <td>
-                {emp.nombre}
-              </td>
-              <td>{emp.equipo}</td>
-              <td>{emp.ganados.toFixed(3)}</td>
             </tr>
           ))}
         </tbody>

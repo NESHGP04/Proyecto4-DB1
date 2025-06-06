@@ -31,7 +31,7 @@ function App() {
 
         {/* Divisiones */}
         <Route path="/divisions" element={<Divisions />} />
-        <Route path="/teams-division/:division/:year" element={<TeamsDivision />} />
+        <Route path="/teams-division/:division/:temporada" element={<TeamsDivision />} />
         <Route path="/player/:id" element={<DetailPlayer />} />
         <Route path="/player/:id/edit" element={<EditPage />} />
 

@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function ReportPos({ temporadaId = 1 }) {
   // Crear CSV de posiciones
   const generarReportePosiciones = async () => {
@@ -11,6 +9,13 @@ export default function ReportPos({ temporadaId = 1 }) {
       if (!response.ok) {
         throw new Error("Error en la respuesta del servidor");
       }
+
+      const contentType = response.headers.get("content-type");
+      console.log("Content-Type:", contentType);
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Respuesta no es JSON");
+      }
+
       const data = await response.json();
 
       if (!data || data.length === 0) {

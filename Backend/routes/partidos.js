@@ -5,20 +5,42 @@ const prisma = new PrismaClient();
 
 // Obtener todos los partidos
 router.get("/", async (req, res) => {
+  const { divisionId } = req.query;
+  console.log('divisionId recibido:', divisionId);
+
   try {
     const partidos = await prisma.partidos.findMany({
       include: {
-        equipos_partidos_equipo_local_idToequipos: true,
-        equipos_partidos_equipo_visitante_idToequipos: true,
+        equipos_partidos_equipo_local_idToequipos: {
+          include: { division: true },
+        },
+        equipos_partidos_equipo_visitante_idToequipos: {
+          include: { division: true },
+        },
         estadios: true,
         torneos: true,
       },
     });
-    res.json(partidos);
+
+    // Si no se envió divisionId, devolver todos
+    if (!divisionId) {
+      return res.json(partidos);
+    }
+
+    // Filtrar en JS los partidos cuyo equipo local o visitante tenga ese divisionId
+    const filtrados = partidos.filter(
+      (p) =>
+        p.equipos_partidos_equipo_local_idToequipos.division_id === parseInt(divisionId) ||
+        p.equipos_partidos_equipo_visitante_idToequipos.division_id === parseInt(divisionId)
+    );
+
+    res.json(filtrados);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Error al obtener partidos" });
   }
 });
+
 
 // Obtener partido por ID
 router.get("/:id", async (req, res) => {

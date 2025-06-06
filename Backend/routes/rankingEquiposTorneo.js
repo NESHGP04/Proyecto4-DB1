@@ -191,4 +191,69 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Genera reporte de posiciones
+router.get('/report', async (req, res) => {
+  //const divisionFiltro = req.query.division;
+
+  try {
+    const { divisionId } = req.query;
+
+    let whereCondition = {};
+    if (divisionId) {
+      whereCondition = { divisionId: parseInt(divisionId) };
+    }
+
+    const rankings = await prisma.ranking.findMany({
+      where: whereCondition,
+      include: {
+        equipos: true,
+        division: true,
+        torneos: true,
+      },
+    });
+
+    const divisionesAgrupadas = {};
+
+    rankings.forEach((r) => {
+      if (!r.equipos || !r.division) return;
+
+      const key = r.division.nombre;
+      const jugados = (r.partidos_ganados ?? 0) + (r.partidos_perdidos ?? 0) + (r.partidos_empatados ?? 0);
+      const promedio = jugados > 0 ? (r.puntos / jugados).toFixed(3) : 0;
+
+      if (!divisionesAgrupadas[key]) divisionesAgrupadas[key] = [];
+
+      divisionesAgrupadas[key].push({
+        equipo: r.equipos.nombre,
+        promedio: parseFloat(promedio),
+        ganados: r.partidos_ganados ?? 0,
+        perdidos: r.partidos_perdidos ?? 0,
+        empatados: r.partidos_empatados ?? 0,
+        total: jugados,
+      });
+    });
+
+    const resultado = [];
+    for (const division in divisionesAgrupadas) {
+      const ordenados = divisionesAgrupadas[division]
+        .sort((a, b) => b.promedio - a.promedio)
+        .map((item, index) => ({
+          division,
+          equipo: item.equipo,
+          posicion: index + 1,
+          ave: item.promedio,
+          jg: item.ganados,
+          jp: item.perdidos,
+          tj: item.total,
+        }));
+      resultado.push(...ordenados);
+    }
+
+    res.json(resultado);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error generando reporte" });
+  }
+});
+
 module.exports = router;

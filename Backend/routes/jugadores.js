@@ -15,6 +15,39 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Obtener jugadores por equipo y division
+router.get("/filtrar", async (req, res) => {
+  const { equipo, division } = req.query;
+
+  if (!equipo || !division ) {
+    return res.status(400).json({ error: "Faltan parámetros de filtrado" });
+  }
+
+  try {
+    const jugadores = await prisma.jugadores.findMany({
+      where: {
+        equipos: {
+          nombre: equipo,
+          division: {
+            nombre: division
+          }
+        }
+      },
+      include: {
+        equipos: {
+          include: { division: true }
+        }
+      }
+    });
+
+    res.json(jugadores);
+  } catch (error) {
+    console.error("Error al filtrar jugadores:", error);
+    res.status(500).json({ error: "Error al filtrar jugadores" });
+  }
+});
+
+
 //  Obtener jugador por ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
@@ -31,6 +64,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Error al obtener jugador" });
   }
 });
+
 
 //  Crear un nuevo jugador (todos los campos obligatorios y verificación de FK)
 router.post("/", async (req, res) => {
