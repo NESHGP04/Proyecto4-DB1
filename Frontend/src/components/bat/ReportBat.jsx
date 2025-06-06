@@ -1,43 +1,70 @@
-export default function ResportBat(){
-    // Crear CSV
-    const generarReporteBateo = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/equipos');
-            const equipos = await response.json();
+import React from "react";
 
-            if (!equipos || equipos.length === 0) {
-                alert("No hay equipos para exportar.");
-                return;
-            }
+export default function ReportBat({ temporadaId = 1 }) {
+  // Crear CSV de bateo
+  const generarReporteBateo = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/cosas_extra/stats/atbat/${temporadaId}`
+      );
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+      const data = await response.json();
 
-            const encabezado = ["División","Porcentaje", "Hits","Sencillos","Dobles","Triples", "Jugador", "Equipo", "Promedio"];
-            const filas = equipos.map(p => [p.division,p.porcentaje, p.hits, p.sencillos, p.dobles, p.triples, p.jugador, p.equipo, p.ave]);
+      if (!data || data.length === 0) {
+        alert("No hay datos de bateo para exportar.");
+        return;
+      }
 
-            const csvContent = [encabezado, ...filas]
-                .map(row => row.join(","))
-                .join("\n");
+      const encabezado = [
+        "ID",
+        "Nombre",
+        "División",
+        "Promedio",
+        "Ganados",
+        "Perdidos",
+        "Total",
+        "Equipo",
+      ];
+      const filas = data.map((j) => [
+        j.id ?? "",
+        j.nombre ?? "",
+        j.division ?? "",
+        j.average ?? "",
+        j.ganados ?? "",
+        j.perdidos ?? "",
+        j.total ?? "",
+        j.equipo ?? "",
+      ]);
 
-            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-            const url = URL.createObjectURL(blob);
+      const csvContent = [encabezado, ...filas]
+        .map((row) => row.map((item) => `"${item}"`).join(","))
+        .join("\r\n");
 
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", "reporte_pacientes.csv");
-            link.style.visibility = "hidden";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error("Error al generar reporte:", error);
-            alert("Error al generar el reporte.");
-        }
-    };
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = window.URL.createObjectURL(blob);
 
-    return(
-        <div className="button-container">
-            <div className="button-report">
-                <button onClick={generarReporteBateo}>Reporte Bateo</button>
-            </div>
-        </div>
-    );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "reporte_bateo.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al generar reporte de bateo:", error);
+      alert("Error al generar el reporte de bateo.");
+    }
+  };
+
+  return (
+    <div className="button-container">
+      <div className="button-report">
+        <button type="button" onClick={generarReporteBateo}>
+          Reporte Bateo
+        </button>
+      </div>
+    </div>
+  );
 }
