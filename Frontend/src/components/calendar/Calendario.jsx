@@ -1,90 +1,83 @@
-import { useState } from 'react';
-import Calendar from 'react-calendar';
-import '@styles/Calendar.css';
-import { useDivision } from '@context/DivisionContext';
-import { usePartidos } from '@/hooks/usePartidos';
-//import { useCalendario } from '@/hooks/useCalendario';
+import React, { useState, useEffect } from "react";
+import Calendar from "react-calendar";
+import "@styles/Calendar.css";
 
 function Calendario() {
-  const [value, setValue] = useState(new Date('2024-01-02'));
+  const [value, setValue] = useState(new Date());
+  const [partidos, setPartidos] = useState([]);
   const [juegosSeleccionados, setJuegosSeleccionados] = useState([]);
-  const { division } = useDivision();
 
-  const { partidos, loading } = usePartidos(
-    division ? { divisionId: division.id } : {}
-  );
+  useEffect(() => {
+    fetch("http://localhost:3001/api/partidos")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => setPartidos(Array.isArray(data) ? data : []))
+      .catch(() => setPartidos([]));
+  }, []);
 
-    // Filtrar por división
-  const juegosDeDivision = partidos.filter(j => {
-    const divisionLocal = j.equipos_partidos_equipo_local_idToequipos?.division_id;
-    const divisionVisitante = j.equipos_partidos_equipo_visitante_idToequipos?.division_id;
-    return divisionLocal === division?.id || divisionVisitante === division?.id;
-  });
+  const handleDateChange = (date) => {
+    setValue(date);
+    const fechaStr = date.toISOString().split("T")[0];
+    setJuegosSeleccionados(
+      partidos.filter(
+        (j) => new Date(j.fecha_hora).toISOString().split("T")[0] === fechaStr
+      )
+    );
+  };
 
   const tileContent = ({ date, view }) => {
-    if (view === 'month') {
-      const fechaStr = date.toISOString().split('T')[0];
-      const juegosDelDia = juegosDeDivision.filter(j => {
-        const partidoFecha = new Date(j.fecha_hora).toISOString().split('T')[0];
-        return partidoFecha === fechaStr;
-      });
-      if (juegosDelDia.length > 0) {
-        return (
-        <div className="juego-dia">
-          {juegosDelDia.map((j, i) => (
-            <div key={i} className="iconito">
-              🥎
+    if (view !== "month" || !Array.isArray(partidos)) return null;
+    const fechaStr = date.toISOString().split("T")[0];
+    const juegosDelDia = partidos.filter(
+      (j) => new Date(j.fecha_hora).toISOString().split("T")[0] === fechaStr
+    );
+    return juegosDelDia.length > 0 ? (
+      <div className="juego-dia">
+        {juegosDelDia.map((_, i) => (
+          <span key={i} className="iconito">
+            🥎
+          </span>
+        ))}
+      </div>
+    ) : null;
+  };
+
+  return (
+    <div className="calendario-prueba">
+      <Calendar
+        onChange={handleDateChange}
+        value={value}
+        className="custom-calendar"
+        tileContent={tileContent}
+        formatMonthYear={(locale, date) =>
+          // solo mes y año, sin "de"
+          `${date.toLocaleString(locale, {
+            month: "long",
+          })} ${date.getFullYear()}`
+        }
+      />
+
+      {juegosSeleccionados.length > 0 && (
+        <div className="detalle-juego">
+          <h3>Juegos programados:</h3>
+          {juegosSeleccionados.map((juego, idx) => (
+            <div key={idx}>
+              <p>
+                <strong>Fecha:</strong>{" "}
+                {new Date(juego.fecha_hora).toLocaleString()}
+              </p>
+              <p>
+                <strong>Partido:</strong>{" "}
+                {juego.equipos_partidos_equipo_local_idToequipos?.nombre} vs{" "}
+                {juego.equipos_partidos_equipo_visitante_idToequipos?.nombre}
+              </p>
+              <hr />
             </div>
           ))}
         </div>
-      );
-      }
-    }
-    return null;
-  };
-
-  // Cuando se selecciona una fecha
-  const handleDateChange = (date) => {
-    setValue(date);
-    const fechaStr = date.toISOString().split('T')[0];
-
-    const juegosDelDia = juegosDeDivision.filter(j => {
-      const partidoFecha = new Date(j.fecha_hora).toISOString().split('T')[0];
-      return partidoFecha === fechaStr;
-    });
-
-    setJuegosSeleccionados(juegosDelDia);
-  };
-
-  console.log('DIVISION ACTUAL:', division);
-  console.log('Partidos desde hook:', partidos);
-
-  return (
-    <div className='calendario-prueba'>
-      
-        <>
-          <Calendar
-            onChange={handleDateChange}
-            value={value}
-            className="custom-calendar"
-            tileContent={tileContent}
-          />
-
-          {juegosSeleccionados.length > 0 && (
-            <div className="detalle-juego">
-              <h3>Juegos programados:</h3>
-              {juegosSeleccionados.map((juego, index) => (
-                <div key={index}>
-                  <p><strong>Fecha:</strong> {new Date(juego.fecha_hora).toLocaleString()}</p>
-                  <p><strong>Partido:</strong> {juego.equipos_partidos_equipo_local_idToequipos?.nombre} vs {juego.equipos_partidos_equipo_visitante_idToequipos?.nombre}</p>
-                  <p><strong>División:</strong> {division?.nombre}</p>
-                  <hr />
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      
+      )}
     </div>
   );
 }

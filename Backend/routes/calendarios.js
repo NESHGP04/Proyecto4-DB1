@@ -35,7 +35,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 //  Obtener calendario por ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
@@ -113,5 +112,23 @@ router.delete("/:id", async (req, res) => {
     res.status(400).json({ error: "Error al eliminar calendario" });
   }
 });
-
+// Obtener partidos del calendario (con equipos y división)
+router.get("/partidos", async (req, res) => {
+  try {
+    const partidos = await prisma.partidos.findMany({
+      include: {
+        equipos_partidos_equipo_local_idToequipos: {
+          select: { nombre: true, division_id: true },
+        },
+        equipos_partidos_equipo_visitante_idToequipos: {
+          select: { nombre: true, division_id: true },
+        },
+      },
+    });
+    res.json(partidos);
+  } catch (error) {
+    console.error("Error al obtener partidos:", error);
+    res.status(500).json({ error: "Error al obtener partidos" });
+  }
+});
 module.exports = router;

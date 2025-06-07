@@ -1,131 +1,88 @@
-.calendar-content {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    flex-wrap: nowrap;
-    text-align: center;
+.calendario-prueba {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
-.description {
-    width: 32%;
-    display: flex;
-    flex-direction: column;
-    margin-top: 100px;
-}
-
-.widget-nocomp, .widget-extra, .widget-azueto, .widget-vacau {
-    border-radius: 20px;
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 85%;
-    height: 90px;
-}
-
-.widget-nocomp{
-    background-color: #FF7676;
-}
-
-.widget-extra{
-    background-color: #81D380;
-}
-
-.widget-azueto{
-    background-color: #ABC6DD;
-}
-
-.widget-vacau{
-    background-color: #FFB51C;
-}
-
-.widget-texto {
-    color: #2e3b7c;
-    font-family: 'Poppins', sans-serif;
-    font-size: 30px;
-    font-weight: 400;
-}
-
-.calendario-prueba{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
+/* Estilo general del calendario */
 .custom-calendar {
-    margin: 10px;
-    font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    width: 100%;
-    height: 450px;
-  }
+  margin: 10px;
+  font-family: "Anton", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
+  /* Eliminamos overflow oculto y forzamos un mínimo de altura */
+  overflow: visible;
+  min-height: 650px; /* ajusta este valor según lo necesites */
+  width: 100%;
+}
+
+/* Cabecera (mes, año) */
+.react-calendar__navigation {
+  font-family: "Anton", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  background-color: #f0f0f0;
+}
+
+.react-calendar__navigation__label {
+  font-family: "Anton", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: black;
+}
+
+/* Días de la semana (LU, MA, ...) */
+.react-calendar__month-view__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  /* reducimos un poco el gap aquí si hace falta */
+  row-gap: 8px;
+  font-family: "Anton", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: black;
+}
+
+/* Rejilla de días del mes */
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  /* aumentamos el espacio entre filas para dar más altura */
+  row-gap: 20px;
+  padding-bottom: 10px;
+}
+
+/* Cada casilla de día */
+.react-calendar__tile {
+  font-family: "Anton", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  padding: 12px 0;
+  color: black;
+  transition: background-color 0.3s;
+}
+
+.react-calendar__tile--active {
+  background: #fb9d18;
+  color: white;
+  border-radius: 8px;
+}
+
+/* Iconos de partidos */
 .juego-dia {
   margin-top: 5px;
   font-size: 18px;
   text-align: center;
 }
 
+/* Detalle de juegos seleccionados */
 .detalle-juego {
   margin-top: 20px;
   padding: 15px;
   background-color: #f9f9f9;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif;
   color: #333;
 }
-
-  
-  /* los días del mes */
-  .react-calendar__tile {
-    font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 18px;
-    padding: 12px 0;
-    color: black;
-    transition: background-color 0.3s;
-  }
-  
-  .react-calendar__tile--active {
-    background: #fb9d18;
-    color: white;
-    border-radius: 8px;
-  }
-  
-  /* cambiar estilo del encabezado (mes, año) */
-  .react-calendar__navigation {
-    font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    background-color: #f0f0f0;
-  }
-  
-  /* días de la semana (lu, ma, etc.) */
-  .react-calendar__month-view__weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    row-gap: 50px;
-    font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    font-size: 14px;
-    color: black;
-  }
-
-  .react-calendar__month-view__days {
-    display: grid !important;
-    grid-template-columns: repeat(7, 1fr);
-    row-gap: 35px;
-  }
-
-  .react-calendar__navigation__label {
-    font-family: 'Anton',system-ui, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: black;
-  }
