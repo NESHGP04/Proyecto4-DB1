@@ -4,16 +4,37 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 // Obtener todos los calendarios
+// Obtener todos los calendarios, o filtrados por división
 router.get("/", async (req, res) => {
+  const divisionId = req.query.division;
+
   try {
+    // Obtener todos los calendarios con su temporada y división asociada
     const calendarios = await prisma.calendario.findMany({
-      include: { temporadas: true },
+      include: {
+        temporadas: {
+          include: {
+            division: true, // Asegúrate de que la relación exista en Prisma
+          },
+        },
+      },
     });
-    res.json(calendarios);
+
+    // Si se proporcionó un ID de división, filtramos
+    let resultado = calendarios;
+    if (divisionId) {
+      resultado = calendarios.filter(
+        (cal) => cal.temporadas?.division?.id === parseInt(divisionId)
+      );
+    }
+
+    res.json(resultado);
   } catch (error) {
+    console.error("Error al obtener calendarios:", error);
     res.status(500).json({ error: "Error al obtener calendarios" });
   }
 });
+
 
 //  Obtener calendario por ID
 router.get("/:id", async (req, res) => {

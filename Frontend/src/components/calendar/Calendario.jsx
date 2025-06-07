@@ -3,9 +3,10 @@ import Calendar from 'react-calendar';
 import '@styles/Calendar.css';
 import { useDivision } from '@context/DivisionContext';
 import { usePartidos } from '@/hooks/usePartidos';
+//import { useCalendario } from '@/hooks/useCalendario';
 
 function Calendario() {
-  const [value, setValue] = useState(new Date('2024-01-01'));
+  const [value, setValue] = useState(new Date('2024-01-02'));
   const [juegosSeleccionados, setJuegosSeleccionados] = useState([]);
   const { division } = useDivision();
 
@@ -60,9 +61,7 @@ function Calendario() {
 
   return (
     <div className='calendario-prueba'>
-      {loading ? (
-        <p>Cargando calendario...</p>
-      ) : (
+      
         <>
           <Calendar
             onChange={handleDateChange}
@@ -85,7 +84,7 @@ function Calendario() {
             </div>
           )}
         </>
-      )}
+      
     </div>
   );
 }
