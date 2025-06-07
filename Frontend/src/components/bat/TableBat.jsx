@@ -1,34 +1,52 @@
-import { useState } from 'react';
-import { useDivision } from '@/context/DivisionContext'; // importa el contexto
+import { useState, useEffect } from "react";
+import { useTemporada } from "@/context/TemporadaContext";
+import { useDivision } from "@/context/DivisionContext";
 
-// Simulación de datos
-const rows = [
-  {
-    id: 1, nombre: "Juan", division: "Norte", average: 0.75, ganados: 9, perdidos: 3, total: 12, equipo: "AA"
-  },
-  {
-    id: 2, nombre: "Pepe", division: "Sur", average: 0.60, ganados: 6, perdidos: 4, total: 10,  equipo: "BB"
-  },
-  {
-    id: 3, nombre: "José", division: "Norte", average: 0.85, ganados: 17, perdidos: 3, total: 20,  equipo: "CC"
-  },
-];
+export default function TablePos() {
+  const { temporadaSeleccionada } = useTemporada();
+  const temporadaId = temporadaSeleccionada?.id;
+  const { division } = useDivision();
 
-function TablePos() {
-  const { division } = useDivision(); // usa división global
-  const [search, setSearch] = useState('');
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Filtrar y ordenar
+  useEffect(() => {
+    if (!temporadaId) return;
+    setLoading(true);
+
+    fetch(`http://localhost:3001/api/cosas_extra/stats/atbat/${temporadaId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudieron obtener las estadísticas");
+        return res.json();
+      })
+      .then((data) => {
+        const parsed = data.map((emp) => ({
+          ...emp,
+          average: parseFloat(emp.average),
+          ganados: Number(emp.ganados),
+          perdidos: Number(emp.perdidos),
+        }));
+        setRows(parsed);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err);
+        setLoading(false);
+      });
+  }, [temporadaId]);
+
+  if (loading) return <div>Cargando estadísticas...</div>;
+  if (error) return <div>Error al cargar estadísticas.</div>;
+
   const filteredRows = rows
-    .filter(emp => emp.division === division)
-    .filter(emp =>
-      emp.nombre?.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => b.average - a.average); // ordenar por average descendente
+    .filter((emp) => emp.division === division)
+    .sort((a, b) => b.average - a.average);
 
   return (
     <div className="table-container">
-        <p>Porcentajes</p>
+      <p>Porcentajes</p>
       <table className="position-table">
         <thead>
           <tr>
@@ -38,14 +56,9 @@ function TablePos() {
           </tr>
         </thead>
         <tbody>
-          {filteredRows.map((emp, index) => (
-            <tr
-              key={emp.id}
-              className="position-row"
-            >
-              <td>
-                {emp.nombre}
-              </td>
+          {filteredRows.map((emp) => (
+            <tr key={emp.id} className="position-row">
+              <td>{emp.nombre}</td>
               <td>{emp.equipo}</td>
               <td>{emp.average.toFixed(3)}</td>
             </tr>
@@ -53,7 +66,7 @@ function TablePos() {
         </tbody>
       </table>
 
-    <p>HOMERUN</p>
+      <p>HOMERUN</p>
       <table className="position-table">
         <thead>
           <tr>
@@ -63,16 +76,11 @@ function TablePos() {
           </tr>
         </thead>
         <tbody>
-          {filteredRows.map((emp, index) => (
-            <tr
-              key={emp.id}
-              className="position-row"
-            >
-              <td>
-                {emp.nombre}
-              </td>
+          {filteredRows.map((emp) => (
+            <tr key={emp.id} className="position-row">
+              <td>{emp.nombre}</td>
               <td>{emp.equipo}</td>
-              <td>{emp.ganados.toFixed(3)}</td>
+              <td>{emp.ganados}</td>
             </tr>
           ))}
         </tbody>
@@ -88,16 +96,11 @@ function TablePos() {
           </tr>
         </thead>
         <tbody>
-          {filteredRows.map((emp, index) => (
-            <tr
-              key={emp.id}
-              className="position-row"
-            >
-              <td>
-                {emp.nombre}
-              </td>
+          {filteredRows.map((emp) => (
+            <tr key={emp.id} className="position-row">
+              <td>{emp.nombre}</td>
               <td>{emp.equipo}</td>
-              <td>{emp.perdidos.toFixed(3)}</td>
+              <td>{emp.perdidos}</td>
             </tr>
           ))}
         </tbody>
@@ -105,5 +108,3 @@ function TablePos() {
     </div>
   );
 }
-
-export default TablePos;
