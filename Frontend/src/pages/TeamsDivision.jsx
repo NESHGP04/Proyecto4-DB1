@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useTeam } from '@/context/TeamContext';
-import { useTemporada } from '@/context/TemporadaContext';
+import { useTeam } from "@/context/TeamContext";
+import { useTemporada } from "@/context/TemporadaContext";
 import { useEffect, useState } from "react";
-import Navbar from '@components/navigation/Navbar'
-import AveSquare from '@components/divisiones/allDivisions/AveSquare'
-import TableAllDiv from '@components/divisiones/allDivisions/TableAllDiv'
-import '@styles/Divisiones.css';
+import Navbar from "@components/navigation/Navbar";
+import AveSquare from "@components/divisiones/allDivisions/AveSquare";
+import TableAllDiv from "@components/divisiones/allDivisions/TableAllDiv";
+import "@styles/Divisiones.css";
 
 function TeamsDivision() {
   const { division } = useParams();
@@ -13,25 +13,38 @@ function TeamsDivision() {
   const { temporadaSeleccionada } = useTemporada();
   const [equipos, setEquipos] = useState([]);
 
+  // Ejemplo de mapeo de nombre a id (ajusta según tus divisiones reales)
+  const divisionNameToId = {
+    Norte: 1,
+    Sur: 2,
+    Este: 3,
+    Oeste: 4,
+  };
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/equipos')
-      .then(response => response.json())
-      .then(data => {
-        console.log("Equipos recibidos:", data);
+    if (!division) return;
+    // Si division es nombre, conviértelo a id
+    const divisionId = isNaN(Number(division))
+      ? divisionNameToId[division]
+      : division;
+    if (!divisionId) return;
+    fetch(`http://localhost:3001/api/equipos/division/${divisionId}`)
+      .then((response) => response.json())
+      .then((data) => {
         setEquipos(data);
+        setTeam(""); // Limpia el equipo seleccionado al cambiar de división
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error al obtener equipos:", error);
       });
-  }, []);
+  }, [division, setTeam]);
 
   return (
     <div>
       <Navbar />
       <h1 className="header">{division}</h1>
       <p className="date">
-          {temporadaSeleccionada ? `${temporadaSeleccionada.nombre}` : ""}
+        {temporadaSeleccionada ? `${temporadaSeleccionada.nombre}` : ""}
       </p>
 
       <select
@@ -41,14 +54,13 @@ function TeamsDivision() {
       >
         <option value="">Selecciona un equipo</option>
         {equipos.map((equipo) => (
-          <option key={equipo.id} value={equipo.nombre}>
+          <option key={equipo.id} value={equipo.id}>
             {equipo.nombre}
           </option>
         ))}
       </select>
-      
-      <AveSquare />
-      <TableAllDiv selectedTeam={team}/>
+
+      <TableAllDiv selectedTeam={team} />
     </div>
   );
 }

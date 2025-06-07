@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 router.get("/filtrar", async (req, res) => {
   const { equipo, division } = req.query;
 
-  if (!equipo || !division ) {
+  if (!equipo || !division) {
     return res.status(400).json({ error: "Faltan parámetros de filtrado" });
   }
 
@@ -29,15 +29,15 @@ router.get("/filtrar", async (req, res) => {
         equipos: {
           nombre: equipo,
           division: {
-            nombre: division
-          }
-        }
+            nombre: division,
+          },
+        },
       },
       include: {
         equipos: {
-          include: { division: true }
-        }
-      }
+          include: { division: true },
+        },
+      },
     });
 
     res.json(jugadores);
@@ -46,7 +46,6 @@ router.get("/filtrar", async (req, res) => {
     res.status(500).json({ error: "Error al filtrar jugadores" });
   }
 });
-
 
 //  Obtener jugador por ID
 router.get("/:id", async (req, res) => {
@@ -64,7 +63,6 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Error al obtener jugador" });
   }
 });
-
 
 //  Crear un nuevo jugador (todos los campos obligatorios y verificación de FK)
 router.post("/", async (req, res) => {
@@ -120,28 +118,13 @@ router.post("/", async (req, res) => {
 //  Actualizar jugador por ID
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const {
-    nombre,
-    apellido,
-    fecha_nacimiento,
-    genero,
-    equipo_id,
-    fecha_ingreso,
-    nacionalidad,
-  } = req.body;
+  const { nombre, apellido, equipo_id } = req.body;
 
-  // Validar que todos los campos obligatorios estén presentes
-  if (
-    !nombre ||
-    !apellido ||
-    !fecha_nacimiento ||
-    !genero ||
-    equipo_id === undefined ||
-    !fecha_ingreso
-  ) {
+  // Validar que los campos obligatorios estén presentes
+  if (!nombre || !apellido || equipo_id === undefined) {
     return res
       .status(400)
-      .json({ error: "Todos los campos obligatorios deben estar presentes" });
+      .json({ error: "Nombre, apellido y equipo_id son obligatorios" });
   }
 
   try {
@@ -157,11 +140,7 @@ router.put("/:id", async (req, res) => {
       data: {
         nombre,
         apellido,
-        fecha_nacimiento: new Date(fecha_nacimiento),
-        genero,
         equipo_id: parseInt(equipo_id),
-        fecha_ingreso: new Date(fecha_ingreso),
-        nacionalidad,
       },
     });
     res.json(jugadorActualizado);
@@ -180,6 +159,20 @@ router.delete("/:id", async (req, res) => {
     res.json({ message: "Jugador eliminado correctamente" });
   } catch (error) {
     res.status(400).json({ error: "Error al eliminar jugador" });
+  }
+});
+
+// Obtener jugadores por equipo
+router.get("/equipo/:equipoId", async (req, res) => {
+  const { equipoId } = req.params;
+  try {
+    const jugadores = await prisma.jugadores.findMany({
+      where: { equipo_id: parseInt(equipoId) },
+      include: { equipos: true },
+    });
+    res.json(jugadores);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener jugadores por equipo" });
   }
 });
 

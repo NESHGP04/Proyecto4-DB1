@@ -1,0 +1,27 @@
+.employee-info-container {
+  margin: 2rem auto;
+  max-width: 900px;
+  font-family: sans-serif;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.stats-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.stats-table tr:last-child td {
+  border-bottom: none;
+}
+
+.stats-table td:first-child {
+  font-weight: 600;
+  background-color: #f9fafb;
+  text-transform: capitalize;
+  width: 40%;
+}

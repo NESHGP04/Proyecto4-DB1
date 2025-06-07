@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useDivision } from '@/context/DivisionContext'; // importa el contexto
+import { useDivision } from "@/context/DivisionContext"; // importa el contexto
 
 function TablePos() {
   const { division } = useDivision(); // usa división global
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [rankings, setRankings] = useState([]);
 
   //Llamada api
@@ -12,7 +12,9 @@ function TablePos() {
       fetch(`http://localhost:3001/api/ranking_equipos_torneo`) // ajusta al path correcto
         .then((res) => res.json())
         .then((data) => {
-          const filtrados = data.filter(item => item.division.id === parseInt(division));
+          const filtrados = data.filter(
+            (item) => item.division.id === parseInt(division)
+          );
           const mapeados = filtrados.map((item) => ({
             id: item.id,
             nombre: item.equipos.nombre,
@@ -20,7 +22,10 @@ function TablePos() {
             average: calcularAverage(item),
             ganados: item.partidos_ganados,
             perdidos: item.partidos_perdidos,
-            total: (item.partidos_ganados ?? 0) + (item.partidos_perdidos ?? 0) + (item.partidos_empatados ?? 0)
+            total:
+              (item.partidos_ganados ?? 0) +
+              (item.partidos_perdidos ?? 0) +
+              (item.partidos_empatados ?? 0),
           }));
           setRankings(mapeados);
         })
@@ -30,28 +35,35 @@ function TablePos() {
     }
   }, [division]);
 
-    const calcularAverage = (item) => {
-      const total = (item.partidos_ganados ?? 0) + (item.partidos_perdidos ?? 0) + (item.partidos_empatados ?? 0);
-      return total > 0 ? (item.partidos_ganados / total) : 0;
-    };
+  const calcularAverage = (item) => {
+    const total =
+      (item.partidos_ganados ?? 0) +
+      (item.partidos_perdidos ?? 0) +
+      (item.partidos_empatados ?? 0);
+    return total > 0 ? item.partidos_ganados / total : 0;
+  };
 
-    const filteredRows = rankings
-      .filter(emp =>
-        emp.nombre?.toLowerCase().includes(search.toLowerCase())
-      )
-      .sort((a, b) => b.average - a.average); // orden por average descendente
+  const filteredRows = rankings
+    .filter((emp) => emp.nombre?.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => b.average - a.average); // orden por average descendente
 
-    // Calcular totales
-    const totalGanados = filteredRows.reduce((sum, emp) => sum + emp.ganados, 0);
-    const totalPerdidos = filteredRows.reduce((sum, emp) => sum + emp.perdidos, 0);
-    const totalJugados = filteredRows.reduce((sum, emp) => sum + emp.total, 0);
-    const totalAverage = filteredRows.length > 0
-      ? (filteredRows.reduce((sum, emp) => sum + emp.average, 0) / filteredRows.length).toFixed(3)
+  // Calcular totales
+  const totalGanados = filteredRows.reduce((sum, emp) => sum + emp.ganados, 0);
+  const totalPerdidos = filteredRows.reduce(
+    (sum, emp) => sum + emp.perdidos,
+    0
+  );
+  const totalJugados = filteredRows.reduce((sum, emp) => sum + emp.total, 0);
+  const totalAverage =
+    filteredRows.length > 0
+      ? (
+          filteredRows.reduce((sum, emp) => sum + emp.average, 0) /
+          filteredRows.length
+        ).toFixed(3)
       : "0.000";
 
   return (
     <div className="table-container">
-
       <table className="position-table">
         <thead>
           <tr>
@@ -77,12 +89,22 @@ function TablePos() {
         </tbody>
         <tfoot>
           <tr className="totals-row">
-            <td><strong>Totales</strong></td>
+            <td>
+              <strong>Totales</strong>
+            </td>
             <td>-</td>
-            <td><strong>{totalAverage}</strong></td>
-            <td><strong>{totalGanados}</strong></td>
-            <td><strong>{totalPerdidos}</strong></td>
-            <td><strong>{totalJugados}</strong></td>
+            <td>
+              <strong>{totalAverage}</strong>
+            </td>
+            <td>
+              <strong>{totalGanados}</strong>
+            </td>
+            <td>
+              <strong>{totalPerdidos}</strong>
+            </td>
+            <td>
+              <strong>{totalJugados}</strong>
+            </td>
           </tr>
         </tfoot>
       </table>

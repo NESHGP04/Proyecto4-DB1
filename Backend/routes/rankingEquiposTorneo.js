@@ -192,7 +192,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Genera reporte de posiciones
-router.get('/report', async (req, res) => {
+router.get("/report", async (req, res) => {
   //const divisionFiltro = req.query.division;
 
   try {
@@ -218,7 +218,10 @@ router.get('/report', async (req, res) => {
       if (!r.equipos || !r.division) return;
 
       const key = r.division.nombre;
-      const jugados = (r.partidos_ganados ?? 0) + (r.partidos_perdidos ?? 0) + (r.partidos_empatados ?? 0);
+      const jugados =
+        (r.partidos_ganados ?? 0) +
+        (r.partidos_perdidos ?? 0) +
+        (r.partidos_empatados ?? 0);
       const promedio = jugados > 0 ? (r.puntos / jugados).toFixed(3) : 0;
 
       if (!divisionesAgrupadas[key]) divisionesAgrupadas[key] = [];
@@ -253,6 +256,24 @@ router.get('/report', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error generando reporte" });
+  }
+});
+
+// Obtener rankings por temporada
+router.get("/temporada/:temporadaId", async (req, res) => {
+  const { temporadaId } = req.params;
+  try {
+    const rankings = await prisma.ranking_equipos_torneo.findMany({
+      where: {
+        torneos: {
+          temporada_id: parseInt(temporadaId),
+        },
+      },
+      include: { division: true, equipos: true, torneos: true },
+    });
+    res.json(rankings);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener rankings por temporada" });
   }
 });
 

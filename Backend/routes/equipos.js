@@ -119,4 +119,18 @@ router.get("/equipo/:equipoId", async (req, res) => {
   }
 });
 
+// Obtener equipos por división
+router.get("/division/:divisionId", async (req, res) => {
+  const { divisionId } = req.params;
+  try {
+    const equipos = await prisma.equipos.findMany({
+      where: { division_id: parseInt(divisionId) },
+      include: { division: true },
+    });
+    res.json(equipos);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener equipos por división" });
+  }
+});
+
 module.exports = router;
